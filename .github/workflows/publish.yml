@@ -1,0 +1,288 @@
+name: Build and Publish Package
+
+on:
+  # Trigger on pushes to main branch (dev releases)
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+      - '.gitignore'
+      - 'examples/**'
+
+  # Trigger on release creation (stable releases)
+  release:
+    types: [published]
+
+  # Trigger on pre-release branches
+  push:
+    branches:
+      - 'release/**'
+
+  # Manual trigger for testing
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: 'Release type'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - alpha
+          - beta
+          - rc
+          - stable
+
+jobs:
+  # Quality checks job
+  quality:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .[dev]
+    
+    - name: Run linting
+      run: |
+        flake8 src/ --max-line-length=100 --exclude=__pycache__
+        black --check src/ --line-length=100
+      continue-on-error: true
+    
+    - name: Run type checking
+      run: |
+        mypy src/easecloud_errica --ignore-missing-imports
+      continue-on-error: true
+    
+    - name: Run tests
+      run: |
+        pytest tests/ -v --cov=easecloud_errica --cov-report=xml
+      continue-on-error: true
+    
+    - name: Test package installation
+      run: |
+        python -c "import easecloud_errica; print(f'✅ Import successful - v{easecloud_errica.__version__}')"
+    
+    - name: Test basic functionality
+      run: |
+        python -c "
+        from easecloud_errica import quick_setup, log_info
+        import os
+        os.environ['APP_NAME'] = 'CI Test'
+        manager, handler = quick_setup()
+        log_info('CI test successful')
+        print('✅ Basic functionality test passed')
+        "
+
+  # Determine version and release type
+  version:
+    runs-on: ubuntu-latest
+    needs: quality
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      release_type: ${{ steps.release_type.outputs.type }}
+      should_publish: ${{ steps.should_publish.outputs.publish }}
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Need full history for version calculation
+    
+    - name: Determine release type
+      id: release_type
+      run: |
+        if [[ "${{ github.event_name }}" == "release" ]]; then
+          echo "type=stable" >> $GITHUB_OUTPUT
+        elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+          echo "type=${{ github.event.inputs.release_type }}" >> $GITHUB_OUTPUT
+        elif [[ "${{ github.ref }}" == refs/heads/main ]]; then
+          echo "type=dev" >> $GITHUB_OUTPUT
+        elif [[ "${{ github.ref }}" == refs/heads/release/* ]]; then
+          echo "type=beta" >> $GITHUB_OUTPUT
+        else
+          echo "type=dev" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Calculate version
+      id: version
+      run: |
+        # Get the current version from pyproject.toml
+        CURRENT_VERSION=$(grep '^version = ' pyproject.toml | cut -d'"' -f2)
+        BASE_VERSION=$(echo $CURRENT_VERSION | cut -d'-' -f1)
+        
+        # Get commit count since last tag for build number
+        COMMIT_COUNT=$(git rev-list --count HEAD)
+        SHORT_SHA=$(git rev-parse --short HEAD)
+        
+        case "${{ steps.release_type.outputs.type }}" in
+          "stable")
+            # For stable releases, use the tag version
+            if [[ "${{ github.event_name }}" == "release" ]]; then
+              VERSION="${{ github.event.release.tag_name }}"
+              VERSION=${VERSION#v}  # Remove 'v' prefix if present
+            else
+              VERSION="$BASE_VERSION"
+            fi
+            ;;
+          "beta")
+            VERSION="${BASE_VERSION}-beta.${COMMIT_COUNT}"
+            ;;
+          "alpha")
+            VERSION="${BASE_VERSION}-alpha.${COMMIT_COUNT}"
+            ;;
+          "rc")
+            VERSION="${BASE_VERSION}-rc.${COMMIT_COUNT}"
+            ;;
+          "dev"|*)
+            VERSION="${BASE_VERSION}-dev.${COMMIT_COUNT}+${SHORT_SHA}"
+            ;;
+        esac
+        
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "📦 Calculated version: $VERSION"
+    
+    - name: Should publish?
+      id: should_publish
+      run: |
+        # Always publish stable and pre-releases
+        # Only publish dev versions from main branch
+        if [[ "${{ steps.release_type.outputs.type }}" == "stable" ]] || \
+           [[ "${{ steps.release_type.outputs.type }}" == "beta" ]] || \
+           [[ "${{ steps.release_type.outputs.type }}" == "alpha" ]] || \
+           [[ "${{ steps.release_type.outputs.type }}" == "rc" ]] || \
+           [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+          echo "publish=true" >> $GITHUB_OUTPUT
+        else
+          echo "publish=false" >> $GITHUB_OUTPUT
+        fi
+
+  # Build and publish package
+  publish:
+    runs-on: ubuntu-latest
+    needs: [quality, version]
+    if: needs.version.outputs.should_publish == 'true'
+    
+    environment:
+      name: ${{ needs.version.outputs.release_type == 'stable' && 'production' || 'development' }}
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install build dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install build twine
+    
+    - name: Update version in pyproject.toml
+      run: |
+        sed -i 's/^version = .*/version = "${{ needs.version.outputs.version }}"/' pyproject.toml
+        echo "📝 Updated version to: ${{ needs.version.outputs.version }}"
+    
+    - name: Update version in __init__.py
+      run: |
+        sed -i 's/__version__ = .*/__version__ = "${{ needs.version.outputs.version }}"/' src/easecloud_errica/__init__.py
+        echo "📝 Updated __init__.py version to: ${{ needs.version.outputs.version }}"
+    
+    - name: Build package
+      run: |
+        python -m build
+        echo "📦 Package built successfully"
+        ls -la dist/
+    
+    - name: Check package
+      run: |
+        twine check dist/*
+        echo "✅ Package check passed"
+    
+    - name: Publish to Test PyPI (for non-stable releases)
+      if: needs.version.outputs.release_type != 'stable'
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.TEST_PYPI_API_TOKEN }}
+      run: |
+        twine upload --repository testpypi dist/* --verbose
+        echo "📤 Published to Test PyPI: https://test.pypi.org/project/easecloud-errica/${{ needs.version.outputs.version }}/"
+    
+    - name: Publish to PyPI (for stable releases)
+      if: needs.version.outputs.release_type == 'stable'
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+      run: |
+        twine upload dist/* --verbose
+        echo "📤 Published to PyPI: https://pypi.org/project/easecloud-errica/${{ needs.version.outputs.version }}/"
+    
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: package-${{ needs.version.outputs.version }}
+        path: dist/
+        retention-days: 30
+    
+    # Create GitHub release for stable versions
+    - name: Create GitHub Release
+      if: needs.version.outputs.release_type == 'stable' && github.event_name != 'release'
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ needs.version.outputs.version }}
+        release_name: Errica v${{ needs.version.outputs.version }}
+        body: |
+          ## 🎉 Errica v${{ needs.version.outputs.version }}
+          
+          **Installation:**
+          ```bash
+          pip install easecloud-errica==${{ needs.version.outputs.version }}
+          ```
+          
+          **What's Changed:**
+          - See [CHANGELOG.md](CHANGELOG.md) for details
+          
+          **Full Changelog:** https://github.com/${{ github.repository }}/commits/v${{ needs.version.outputs.version }}
+        draft: false
+        prerelease: false
+
+  # Notification job
+  notify:
+    runs-on: ubuntu-latest
+    needs: [publish, version]
+    if: always() && needs.version.outputs.should_publish == 'true'
+    
+    steps:
+    - name: Notify success
+      if: needs.publish.result == 'success'
+      run: |
+        echo "🎉 Successfully published easecloud-errica v${{ needs.version.outputs.version }}"
+        echo "📦 Release type: ${{ needs.version.outputs.release_type }}"
+        
+        if [[ "${{ needs.version.outputs.release_type }}" == "stable" ]]; then
+          echo "🔗 PyPI: https://pypi.org/project/easecloud-errica/${{ needs.version.outputs.version }}/"
+        else
+          echo "🔗 Test PyPI: https://test.pypi.org/project/easecloud-errica/${{ needs.version.outputs.version }}/"
+        fi
+    
+    - name: Notify failure
+      if: needs.publish.result == 'failure'
+      run: |
+        echo "❌ Failed to publish easecloud-errica v${{ needs.version.outputs.version }}"
+        echo "📋 Check the logs above for details"
+        exit 1
