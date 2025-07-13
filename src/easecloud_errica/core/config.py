@@ -8,7 +8,7 @@ from typing import Dict, Any, Optional, List
 from datetime import datetime
 
 
-class ErrorMonitorConfig:
+class ErricaConfig:
     """Configuration manager for error monitoring with multi-channel support"""
     
     DEFAULT_CONFIG = {
@@ -463,17 +463,17 @@ class ErrorMonitorConfig:
             yaml.dump(self.config, f, default_flow_style=False, indent=2)
 
 
-def create_default_config() -> ErrorMonitorConfig:
+def create_default_config() -> ErricaConfig:
     """Create configuration with default values"""
-    return ErrorMonitorConfig()
+    return ErricaConfig()
 
 
-def create_config_from_env() -> ErrorMonitorConfig:
+def create_config_from_env() -> ErricaConfig:
     """Create configuration from environment variables"""
-    config = ErrorMonitorConfig()
+    config = ErricaConfig()
     return config
 
 
-def load_config_from_file(file_path: str) -> ErrorMonitorConfig:
+def load_config_from_file(file_path: str) -> ErricaConfig:
     """Load configuration from file"""
-    return ErrorMonitorConfig(config_file=file_path)
+    return ErricaConfig(config_file=file_path)

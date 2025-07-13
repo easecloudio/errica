@@ -119,9 +119,9 @@ routing:
 ### Programmatic Configuration
 
 ```python
-from easecloud_errica import ErrorMonitorConfig, create_monitor
+from easecloud_errica import ErricaConfig, create_monitor
 
-config = ErrorMonitorConfig()
+config = ErricaConfig()
 config.set_config("channels.telegram.enabled", True)
 config.set_config("channels.telegram.bot_token", "your_token")
 
@@ -270,7 +270,7 @@ See the `examples/` directory for comprehensive examples:
 pytest
 
 # Run with coverage
-pytest --cov=error_monitor
+pytest --cov=easecloud_errica
 
 # Run specific test types
 pytest -m unit

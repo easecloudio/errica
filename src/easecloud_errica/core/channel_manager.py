@@ -9,19 +9,19 @@ from datetime import datetime
 
 from ..channels import BaseChannel, ChannelResult, TelegramChannel, SlackChannel, WebhookChannel, ConsoleChannel
 from ..formatters import MessageData
-from .config import ErrorMonitorConfig
+from .config import ErricaConfig
 
 
 class ChannelManager:
     """Manages multiple notification channels and routes messages appropriately"""
     
-    def __init__(self, config: ErrorMonitorConfig):
+    def __init__(self, config: ErricaConfig):
         self.config = config
         self.channels: Dict[str, BaseChannel] = {}
         self.enabled_channels: List[str] = []
         
         # Threading for parallel sends
-        self.executor = ThreadPoolExecutor(max_workers=10, thread_name_prefix="ErrorMonitor")
+        self.executor = ThreadPoolExecutor(max_workers=10, thread_name_prefix="Errica")
         self.lock = threading.Lock()
         
         # Statistics

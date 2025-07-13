@@ -5,13 +5,13 @@ Multi-channel demonstration showing different notification channels
 import os
 import time
 from easecloud_errica import (
-    create_monitor, ErrorMonitorConfig, task_monitor, 
+    create_monitor, ErricaConfig, task_monitor, 
     log_error, log_info, log_warning, log_critical, send_alert, set_global_manager
 )
 
 def setup_demo_config():
     """Setup configuration for multi-channel demo"""
-    config = ErrorMonitorConfig()
+    config = ErricaConfig()
     
     # App configuration
     config.set_config("app.name", "Multi-Channel Demo")
@@ -39,7 +39,7 @@ def setup_demo_config():
     if slack_webhook:
         config.set_config("channels.slack.enabled", True)
         config.set_config("channels.slack.webhook_url", slack_webhook)
-        config.set_config("channels.slack.channel", "#error-monitor-demo")
+        config.set_config("channels.slack.channel", "#errica-demo")
         config.set_config("channels.slack.username", "Demo Bot")
         print("💬 Slack channel enabled")
     else:

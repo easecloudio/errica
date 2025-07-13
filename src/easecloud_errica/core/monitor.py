@@ -17,7 +17,7 @@ _channel_manager = None
 
 def setup_monitoring(channel_manager=None) -> bool:
     """
-    Setup error monitoring with channel manager
+    Setup Errica with channel manager
     
     Args:
         channel_manager: Channel manager instance for notifications
@@ -38,12 +38,12 @@ def setup_monitoring(channel_manager=None) -> bool:
         
         return True
     except Exception as e:
-        print(f"Failed to setup error monitoring: {e}")
+        print(f"Failed to setup Errica: {e}")
         return False
 
 
-class ErrorMonitoring:
-    """Error monitoring utility class"""
+class ErricaMonitoring:
+    """Errica monitoring utility class"""
     
     @classmethod
     def set_context(cls, **kwargs):
@@ -118,7 +118,7 @@ def task_monitor(task_name: str, category: str = "general", context: Optional[Di
         if context:
             task_context.update(context)
         
-        ErrorMonitoring.add_context(**task_context)
+        ErricaMonitoring.add_context(**task_context)
         
         # Send task start notification if enabled
         if _channel_manager and hasattr(_channel_manager, 'send_task_start'):
@@ -158,7 +158,7 @@ def task_monitor(task_name: str, category: str = "general", context: Optional[Di
         raise
     finally:
         # Clear task-specific context
-        ErrorMonitoring.clear_context()
+        ErricaMonitoring.clear_context()
 
 
 @contextmanager  
@@ -196,7 +196,7 @@ def error_context(**kwargs):
     """
     try:
         # Set context in error handler
-        ErrorMonitoring.add_context(**kwargs)
+        ErricaMonitoring.add_context(**kwargs)
         yield
     finally:
         # Note: We don't clear context here as it might be used by outer contexts
@@ -301,10 +301,10 @@ def test_monitoring():
     if _channel_manager:
         try:
             # Test with a simple message
-            send_custom_alert("Error monitoring test", "INFO", {"test": True})
+            send_custom_alert("Errica monitoring test", "INFO", {"test": True})
             return True
         except Exception as e:
-            print(f"Error monitoring test failed: {e}")
+            print(f"Errica monitoring test failed: {e}")
             return False
     else:
         print("No channel manager available for testing")

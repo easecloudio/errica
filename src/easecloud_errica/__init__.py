@@ -35,9 +35,9 @@ __email__ = "info@easecloud.io"
 
 # Core imports
 from .core import (
-    ErrorMonitorConfig, create_default_config, create_config_from_env, load_config_from_file,
+    ErricaConfig, create_default_config, create_config_from_env, load_config_from_file,
     ErrorHandler, initialize_error_handler, capture_exception, capture_message, get_error_handler,
-    ErrorMonitoring, setup_monitoring, task_monitor, batch_monitor, error_context,
+    ErricaMonitoring, setup_monitoring, task_monitor, batch_monitor, error_context,
     capture_task_error, capture_custom_error, send_custom_alert, test_monitoring,
     monitor_function, monitor_async_function, task_context, batch_context
 )
@@ -66,14 +66,14 @@ __all__ = [
     "__email__",
     
     # Configuration
-    "ErrorMonitorConfig",
+    "ErricaConfig",
     "create_default_config", 
     "create_config_from_env",
     "load_config_from_file",
     
     # Core monitoring
     "ErrorHandler",
-    "ErrorMonitoring", 
+    "ErricaMonitoring", 
     "ChannelManager",
     "initialize_error_handler",
     "setup_monitoring",
@@ -189,16 +189,16 @@ def quick_setup(config_file: str = None, **kwargs) -> tuple:
         return _global_channel_manager, _global_error_handler
         
     except Exception as e:
-        print(f"L Failed to setup error monitoring: {e}")
+        print(f"L Failed to setup Errica: {e}")
         raise
 
 
-def create_monitor(config: ErrorMonitorConfig = None) -> tuple:
+def create_monitor(config: ErricaConfig = None) -> tuple:
     """
     Create a new monitor instance with explicit configuration
     
     Args:
-        config: ErrorMonitorConfig instance
+        config: ErricaConfig instance
     
     Returns:
         tuple: (channel_manager, error_handler)
@@ -249,7 +249,7 @@ def shutdown_monitoring():
         _global_error_handler.disable()
         _global_error_handler = None
     
-    print("=� Error monitoring shutdown complete")
+    print("=� Errica shutdown complete")
 
 
 # Package-level convenience functions for backward compatibility and ease of use
@@ -325,7 +325,7 @@ def get_monitoring_stats() -> dict:
         stats["error_handler"] = _global_error_handler.get_stats()
     
     # Add monitoring stats
-    monitoring_stats = ErrorMonitoring.get_stats()
+    monitoring_stats = ErricaMonitoring.get_stats()
     stats["monitoring"] = monitoring_stats
     
     return stats

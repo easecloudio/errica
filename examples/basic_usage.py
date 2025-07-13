@@ -1,5 +1,5 @@
 """
-Basic usage example for the new error-monitor package
+Basic usage example for the Errica package
 """
 
 import os
@@ -23,9 +23,9 @@ def main():
     # Quick setup - automatically detects configuration from environment
     try:
         manager, handler = quick_setup()
-        print("✅ Error monitoring initialized successfully")
+        print("✅ Errica initialized successfully")
     except Exception as e:
-        print(f"❌ Failed to initialize error monitoring: {e}")
+        print(f"❌ Failed to initialize Errica: {e}")
         return
     
     # Log some basic messages

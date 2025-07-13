@@ -4,7 +4,7 @@ Advanced usage example showing multi-channel configuration and custom routing
 
 import os
 from easecloud_errica import (
-    create_monitor, ErrorMonitorConfig, task_monitor, batch_monitor, 
+    create_monitor, ErricaConfig, task_monitor, batch_monitor, 
     log_error, send_alert, health_check, set_global_manager
 )
 
@@ -168,7 +168,7 @@ def main():
         # Set up global monitoring
         set_global_manager(manager)
         
-        print("✅ Advanced error monitoring initialized")
+        print("✅ Advanced Errica monitoring initialized")
         print(f"   📡 Enabled channels: {', '.join(manager.enabled_channels)}")
     except Exception as e:
         print(f"❌ Failed to initialize monitoring: {e}")
