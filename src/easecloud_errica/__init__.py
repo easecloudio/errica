@@ -29,7 +29,7 @@ Usage:
     ...     pass
 """
 
-__version__ = "2.0.0"
+__version__ = "0.1.0-beta"
 __author__ = "EaseCloud.io"
 __email__ = "info@easecloud.io"
 
@@ -183,7 +183,7 @@ def quick_setup(config_file: str = None, **kwargs) -> tuple:
         # Setup monitoring
         setup_monitoring(_global_channel_manager)
         
-        print(f"=� Error Monitor v{__version__} initialized")
+        print(f"=� Errica v{__version__} initialized")
         print(f"   =� Active channels: {', '.join(_global_channel_manager.enabled_channels)}")
         
         return _global_channel_manager, _global_error_handler
@@ -316,7 +316,7 @@ def health_check() -> dict:
 
 def get_monitoring_stats() -> dict:
     """Get comprehensive monitoring statistics"""
-    stats = {"error_monitor_version": __version__}
+    stats = {"errica_version": __version__}
     
     if _global_channel_manager:
         stats["channel_manager"] = _global_channel_manager.get_stats()
@@ -338,4 +338,4 @@ def get_version():
 
 
 # Initialize package
-print(f"=� Error Monitor v{__version__} loaded")
+# Package loaded silently

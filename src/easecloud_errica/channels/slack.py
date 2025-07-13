@@ -19,7 +19,7 @@ class SlackFormatter(JsonFormatter):
         
         payload = {
             "blocks": blocks,
-            "username": self.config.get("username", "Error Monitor"),
+            "username": self.config.get("username", "Errica"),
             "icon_emoji": self.config.get("icon_emoji", ":warning:")
         }
         
@@ -36,7 +36,7 @@ class SlackFormatter(JsonFormatter):
         
         payload = {
             "blocks": blocks,
-            "username": self.config.get("username", "Error Monitor"),
+            "username": self.config.get("username", "Errica"),
             "icon_emoji": self.config.get("icon_emoji", ":rotating_light:")
         }
         
@@ -304,7 +304,7 @@ class SlackChannel(BaseChannel):
             
             payload = {
                 "blocks": blocks,
-                "username": self.config.get("username", "Error Monitor"),
+                "username": self.config.get("username", "Errica"),
                 "icon_emoji": self.config.get("icon_emoji", ":page_facing_up:")
             }
             
@@ -343,8 +343,8 @@ class SlackChannel(BaseChannel):
         try:
             # Send a minimal test payload
             test_payload = {
-                "text": "Health check from Error Monitor",
-                "username": self.config.get("username", "Error Monitor"),
+                "text": "Health check from Errica",
+                "username": self.config.get("username", "Errica"),
                 "icon_emoji": ":white_check_mark:"
             }
             

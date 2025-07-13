@@ -32,7 +32,7 @@ def create_custom_config():
         config.set_config("channels.slack.enabled", True)
         config.set_config("channels.slack.webhook_url", slack_webhook)
         config.set_config("channels.slack.channel", "#alerts")
-        config.set_config("channels.slack.username", "Error Monitor Bot")
+        config.set_config("channels.slack.username", "Errica Bot")
         config.set_config("channels.slack.thread_errors", True)
     
     # Configure webhook if URL is available  
@@ -148,7 +148,7 @@ def demonstrate_statistics(manager):
 
 def main():
     """Advanced usage demonstration"""
-    print("🚀 Starting Error Monitor advanced usage example")
+    print("🚀 Starting Errica advanced usage example")
     
     # Create custom configuration
     config = create_custom_config()

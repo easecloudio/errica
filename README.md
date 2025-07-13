@@ -282,7 +282,6 @@ pytest -m integration
 - [Configuration Reference](docs/configuration.md)
 - [Channel Setup Guides](docs/channels/)
 - [API Documentation](docs/api.md)
-- [Migration from v1.x](docs/migration.md)
 
 ## 🤝 Contributing
 
@@ -294,10 +293,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🔗 Links
 
-- [GitHub Repository](https://github.com/easecloud/easecloud-errica)
+- [GitHub Repository](https://github.com/easecloudio/easecloud-errica)
 - [PyPI Package](https://pypi.org/project/easecloud-errica/)
 - [Documentation](https://easecloud-errica.readthedocs.io/)
-- [Issue Tracker](https://github.com/easecloud/easecloud-errica/issues)
+- [Issue Tracker](https://github.com/easecloudio/easecloud-errica/issues)
 
 ## 🎯 Roadmap
 

@@ -206,8 +206,8 @@ class WebhookChannel(BaseChannel):
             health_payload = {
                 "type": "health_check",
                 "timestamp": self._get_timestamp(),
-                "source": "error_monitor",
-                "message": "Health check from Error Monitor"
+                "source": "errica",
+                "message": "Health check from Errica"
             }
             
             if self.payload_format == "json":

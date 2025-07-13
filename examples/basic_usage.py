@@ -8,7 +8,7 @@ from easecloud_errica import quick_setup, task_monitor, log_error, log_info, sen
 # Set environment variables for configuration
 # In production, these would be set in your environment or configuration files
 os.environ["APP_NAME"] = "Example App"
-os.environ["APP_VERSION"] = "2.0.0"
+os.environ["APP_VERSION"] = "0.1.0-beta"
 os.environ["ENVIRONMENT"] = "development"
 
 # Example: Enable console output (always enabled by default)
@@ -18,7 +18,7 @@ os.environ["ENVIRONMENT"] = "development"
 
 def main():
     """Basic usage example"""
-    print("🚀 Starting Error Monitor basic usage example")
+    print("🚀 Starting Errica basic usage example")
     
     # Quick setup - automatically detects configuration from environment
     try:

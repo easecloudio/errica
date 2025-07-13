@@ -86,7 +86,7 @@ class ErrorMonitorConfig:
                 "enabled": False,
                 "webhook_url": "",
                 "channel": "",
-                "username": "Error Monitor",
+                "username": "Errica",
                 "icon_emoji": ":warning:",
                 "rate_limiting": {
                     "max_messages_per_minute": 30,

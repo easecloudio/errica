@@ -249,7 +249,7 @@ def demo_health_checks(manager):
 
 def main():
     """Run the multi-channel demonstration"""
-    print("🚀 Starting Multi-Channel Error Monitor Demo")
+    print("🚀 Starting Multi-Channel Errica Demo")
     print("=" * 50)
     
     # Setup configuration
