@@ -147,7 +147,7 @@ jobs:
             VERSION="${BASE_VERSION}-rc.${COMMIT_COUNT}"
             ;;
           "dev"|*)
-            VERSION="${BASE_VERSION}-dev.${COMMIT_COUNT}+${SHORT_SHA}"
+            VERSION="${BASE_VERSION}-dev.${COMMIT_COUNT}"
             ;;
         esac
         
