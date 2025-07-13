@@ -1,10 +1,10 @@
 # Errica by EaseCloud — Your Python error monitor
 
-A comprehensive multi-channel error monitoring and notification system for Python applications. Monitor errors, exceptions, and custom events across multiple notification channels including Telegram, Slack, webhooks, email, and console output.
+A comprehensive multi-channel error monitoring and notification system for Python applications. Monitor errors, exceptions, and custom events across multiple notification channels including Telegram, Slack, webhooks, and console output.
 
 ## 🚀 Features
 
-- **Multi-Channel Notifications**: Send alerts to Telegram, Slack, webhooks, email, and console
+- **Multi-Channel Notifications**: Send alerts to Telegram, Slack, webhooks, and console
 - **Smart Routing**: Route different error levels to different channels based on environment
 - **Global Exception Handling**: Automatically capture unhandled exceptions, asyncio errors, and threading errors
 - **Task Monitoring**: Context managers for monitoring tasks and batch operations
@@ -72,13 +72,6 @@ export SLACK_WEBHOOK_URL="https://hooks.slack.com/services/..."
 
 # Generic webhook (optional)
 export WEBHOOK_URL="https://your-webhook-endpoint.com/alerts"
-
-# Email (optional)
-export SMTP_HOST="smtp.gmail.com"
-export SMTP_USERNAME="your-email@gmail.com"
-export SMTP_PASSWORD="your-password"
-export FROM_EMAIL="alerts@yourcompany.com"
-export TO_EMAILS="admin@yourcompany.com,dev@yourcompany.com"
 ```
 
 ## 📋 Configuration
@@ -110,7 +103,7 @@ channels:
 
 routing:
   level_routing:
-    CRITICAL: ["telegram", "slack", "email"]
+    CRITICAL: ["telegram", "slack"]
     ERROR: ["telegram", "slack"]
     WARNING: ["slack", "console"]
     INFO: ["console"]
@@ -151,13 +144,6 @@ manager, handler = create_monitor(config)
 - Custom headers and authentication
 - Configurable retry logic
 
-### Email
-
-- HTML email templates
-- SMTP/SMTP_SSL support
-- Multiple recipients and CC
-- Attachment support
-
 ### Console
 
 - Colored terminal output
@@ -176,11 +162,11 @@ config = create_config_from_env()
 
 # Route critical errors to all channels
 config.set_config("routing.level_routing.CRITICAL",
-                 ["telegram", "slack", "email", "console"])
+                 ["telegram", "slack", "console"])
 
 # Route errors differently per environment
 config.set_config("routing.environment_routing.production.ERROR",
-                 ["telegram", "email"])
+                 ["telegram"])
 config.set_config("routing.environment_routing.development.ERROR",
                  ["console"])
 
@@ -197,8 +183,8 @@ with task_monitor("user_registration", category="auth"):
     register_user(user_data)
 
 # Monitor batch operations
-with batch_monitor("email_batch", category="notifications", batch_size=100):
-    send_batch_emails(email_list)
+with batch_monitor("notification_batch", category="notifications", batch_size=100):
+    send_notifications(notification_list)
 
 # Decorators for functions
 from easecloud_errica import monitor_function, monitor_async_function
