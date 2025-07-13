@@ -1,0 +1,313 @@
+# Error Monitor Configuration Example
+# This file shows all available configuration options
+
+app:
+  name: "My Application"
+  version: "1.0.0"
+  environment: "production"  # production, staging, development, local
+
+channels:
+  # Telegram Configuration
+  telegram:
+    enabled: true
+    bot_token: "YOUR_BOT_TOKEN"
+    chat_id: "YOUR_CHAT_ID"
+    
+    # Proxy configuration (optional)
+    proxy:
+      enabled: false
+      type: "http"  # http, socks4, socks5
+      host: "proxy.example.com"
+      port: 8080
+      username: ""
+      password: ""
+    
+    # Rate limiting
+    rate_limiting:
+      max_messages_per_minute: 20
+      max_messages_per_hour: 100
+    
+    # Message deduplication window (minutes)
+    deduplication_window_minutes: 5
+    
+    # Whether to send exceptions as file attachments
+    send_exceptions_as_files: true
+    
+    # Maximum message length before sending as file
+    max_message_length: 4000
+    
+    # Severity-specific configuration
+    severity_config:
+      CRITICAL:
+        emoji: "🚨"
+        color: "#FF0000"
+        send_as_file: true
+        notify_immediately: true
+      ERROR:
+        emoji: "❌"
+        color: "#FF6B6B"
+        send_as_file: true
+        notify_immediately: true
+      WARNING:
+        emoji: "⚠️"
+        color: "#FFB74D"
+        send_as_file: false
+        notify_immediately: false
+      INFO:
+        emoji: "ℹ️"
+        color: "#4FC3F7"
+        send_as_file: false
+        notify_immediately: false
+    
+    # Environment emojis
+    environment_emoji:
+      production: "🏭"
+      staging: "🧪"
+      development: "🛠️"
+      local: "💻"
+    
+    # Retry configuration
+    retry_config:
+      max_retries: 3
+      base_delay: 1
+      max_delay: 30
+      exponential_base: 2
+
+  # Slack Configuration
+  slack:
+    enabled: true
+    webhook_url: "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+    channel: "#alerts"
+    username: "Error Monitor"
+    icon_emoji: ":warning:"
+    
+    # Rate limiting
+    rate_limiting:
+      max_messages_per_minute: 30
+      max_messages_per_hour: 200
+    
+    # Message deduplication window (minutes)
+    deduplication_window_minutes: 5
+    
+    # Whether to thread related errors
+    thread_errors: true
+    
+    # Mention for critical errors
+    mention_on_critical: "@channel"
+    
+    # Severity-specific configuration
+    severity_config:
+      CRITICAL:
+        color: "danger"
+        mention: true
+        send_as_file: true
+      ERROR:
+        color: "warning"
+        mention: false
+        send_as_file: false
+      WARNING:
+        color: "warning"
+        mention: false
+        send_as_file: false
+      INFO:
+        color: "good"
+        mention: false
+        send_as_file: false
+    
+    # Retry configuration
+    retry_config:
+      max_retries: 3
+      base_delay: 1
+      max_delay: 30
+      exponential_base: 2
+
+  # Generic Webhook Configuration
+  webhook:
+    enabled: true
+    url: "https://api.example.com/webhooks/errors"
+    method: "POST"  # GET, POST, PUT, PATCH, DELETE
+    
+    # Headers
+    headers:
+      Content-Type: "application/json"
+      X-API-Key: "your-api-key"
+    
+    # Authentication
+    auth:
+      type: "bearer"  # none, basic, bearer, custom
+      token: "your-bearer-token"
+      # For basic auth:
+      # username: "user"
+      # password: "pass"
+      # For custom headers:
+      # custom_headers:
+      #   Authorization: "Custom token"
+    
+    # Payload format
+    payload_format: "json"  # json, form
+    
+    # Request timeout (seconds)
+    timeout: 30
+    
+    # Rate limiting
+    rate_limiting:
+      max_messages_per_minute: 60
+      max_messages_per_hour: 1000
+    
+    # Message deduplication window (minutes)
+    deduplication_window_minutes: 5
+    
+    # Retry configuration
+    retry_config:
+      max_retries: 3
+      base_delay: 1
+      max_delay: 30
+      exponential_base: 2
+
+  # Email Configuration
+  email:
+    enabled: false
+    smtp_host: "smtp.gmail.com"
+    smtp_port: 587
+    smtp_username: "your-email@gmail.com"
+    smtp_password: "your-password"
+    use_tls: true
+    
+    # Email addresses
+    from_email: "alerts@yourcompany.com"
+    to_emails:
+      - "admin@yourcompany.com"
+      - "devops@yourcompany.com"
+    cc_emails:
+      - "manager@yourcompany.com"
+    
+    # Subject template
+    subject_template: "[{level}] {app_name} - {message}"
+    
+    # Rate limiting (emails are typically more limited)
+    rate_limiting:
+      max_messages_per_minute: 5
+      max_messages_per_hour: 50
+    
+    # Message deduplication window (minutes)
+    deduplication_window_minutes: 10
+    
+    # Retry configuration
+    retry_config:
+      max_retries: 3
+      base_delay: 2
+      max_delay: 60
+      exponential_base: 2
+
+  # Console Configuration
+  console:
+    enabled: true
+    use_colors: true
+    include_timestamp: true
+    include_level: true
+    include_source: true
+    
+    # Output stream
+    output_stream: "stdout"  # stdout, stderr
+    
+    # Show detailed exceptions with full traceback
+    show_detailed_exceptions: true
+    
+    # Format template
+    format: "{timestamp} [{level}] {app_name}: {message}"
+    
+    # Color scheme
+    color_scheme:
+      CRITICAL: "red"
+      ERROR: "red"
+      WARNING: "yellow"
+      INFO: "blue"
+      DEBUG: "gray"
+
+# Global Error Handling Configuration
+global_error_handling:
+  enabled: true
+  capture_unhandled_exceptions: true
+  capture_asyncio_exceptions: true
+  capture_threading_exceptions: true
+  auto_send_notifications: true
+  include_system_info: true
+  include_environment_vars: false
+  
+  # Sensitive keys to mask in context
+  mask_sensitive_keys:
+    - "password"
+    - "token" 
+    - "secret"
+    - "key"
+    - "auth"
+    - "api_key"
+    - "private"
+    - "credential"
+
+# Message Routing Configuration
+routing:
+  # Default channels when no specific routing matches
+  default_channels:
+    - "console"
+  
+  # Routing by severity level
+  level_routing:
+    CRITICAL:
+      - "telegram"
+      - "slack" 
+      - "email"
+      - "console"
+    ERROR:
+      - "telegram"
+      - "slack"
+      - "console"
+    WARNING:
+      - "slack"
+      - "console"
+    INFO:
+      - "console"
+    DEBUG:
+      - "console"
+  
+  # Environment-specific routing overrides
+  environment_routing:
+    production:
+      CRITICAL:
+        - "telegram"
+        - "email"
+        - "slack"
+      ERROR:
+        - "telegram"
+        - "slack"
+      WARNING:
+        - "slack"
+      INFO:
+        - "console"
+    
+    staging:
+      CRITICAL:
+        - "slack"
+        - "telegram"
+      ERROR:
+        - "slack"
+      WARNING:
+        - "slack"
+      INFO:
+        - "console"
+    
+    development:
+      ERROR:
+        - "console"
+      WARNING:
+        - "console"
+      INFO:
+        - "console"
+    
+    local:
+      ERROR:
+        - "console"
+      WARNING:
+        - "console"
+      INFO:
+        - "console"
