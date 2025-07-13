@@ -1,9 +1,15 @@
 name: Test Package
 
 on:
-  # Run tests on all PRs
+  # Run tests on all PRs (only for code changes)
   pull_request:
     branches: [ main ]
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - 'pyproject.toml'
+      - '.github/workflows/test.yml'
+      - '.github/workflows/publish.yml'
   
   # Run tests on pushes to main (but not publish)
   push:

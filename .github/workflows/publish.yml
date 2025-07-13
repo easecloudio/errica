@@ -6,10 +6,14 @@ on:
     branches:
       - main
     paths-ignore:
-      - 'README.md'
+      - '**.md'
       - 'docs/**'
       - '.gitignore'
       - 'examples/**'
+      - 'CHANGELOG.md'
+      - 'LICENSE'
+      - '.github/README.md'
+      - '.github/dependabot.yml'
 
   # Trigger on release creation (stable releases)
   release:
@@ -19,6 +23,15 @@ on:
   push:
     branches:
       - 'release/**'
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.gitignore'
+      - 'examples/**'
+      - 'CHANGELOG.md'
+      - 'LICENSE'
+      - '.github/README.md'
+      - '.github/dependabot.yml'
 
   # Manual trigger for testing
   workflow_dispatch:

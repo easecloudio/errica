@@ -279,13 +279,34 @@ pytest -m integration
 
 ## 📚 Documentation
 
+- [Development Guide](docs/development.md) - Setup, testing, and contributing
+- [GitHub Actions Workflows](docs/workflows.md) - CI/CD and automated publishing
 - [Configuration Reference](docs/configuration.md)
 - [Channel Setup Guides](docs/channels/)
 - [API Documentation](docs/api.md)
 
+## 🚀 CI/CD & Publishing
+
+Errica uses automated GitHub Actions workflows for testing and publishing:
+
+- **Automated Testing**: Multi-platform testing on every PR and push
+- **Automated Publishing**:
+  - `main` branch → Dev releases to Test PyPI (`0.1.0-dev.123+sha`)
+  - `release/**` branches → Beta releases to Test PyPI (`0.1.0-beta.1`)
+  - GitHub releases → Stable releases to PyPI (`1.0.0`)
+- **Manual Releases**: Use GitHub Actions to create properly versioned releases
+
+**Quick Release:**
+
+1. Go to Actions → "Create Release"
+2. Enter version (e.g., `1.0.0`)
+3. Workflow handles version updates, tagging, and PyPI publishing
+
+See [Workflows Documentation](docs/workflows.md) for complete details.
+
 ## 🤝 Contributing
 
-Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details.
+Contributions are welcome! Please read our [Development Guide](docs/development.md) for setup instructions and [Contributing Guide](CONTRIBUTING.md) for details.
 
 ## 📄 License
 

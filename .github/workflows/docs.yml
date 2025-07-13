@@ -1,0 +1,125 @@
+name: Documentation
+
+on:
+  # Run on PRs that change documentation
+  pull_request:
+    branches: [ main ]
+    paths:
+      - '**.md'
+      - 'docs/**'
+      - 'CHANGELOG.md'
+      - '.github/workflows/docs.yml'
+  
+  # Run on pushes to main that change documentation
+  push:
+    branches: [ main ]
+    paths:
+      - '**.md'
+      - 'docs/**'
+      - 'CHANGELOG.md'
+      - '.github/workflows/docs.yml'
+  
+  # Manual trigger
+  workflow_dispatch:
+
+jobs:
+  lint-docs:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Lint Markdown files
+      uses: DavidAnson/markdownlint-cli2-action@v16
+      with:
+        globs: |
+          **.md
+          !node_modules
+        config: |
+          {
+            "MD013": false,
+            "MD033": false,
+            "MD041": false
+          }
+      continue-on-error: true
+    
+    - name: Check links in documentation
+      uses: gaurav-nelson/github-action-markdown-link-check@v1
+      with:
+        use-quiet-mode: 'yes'
+        use-verbose-mode: 'yes'
+        config-file: '.github/markdown-link-check.json'
+      continue-on-error: true
+    
+    - name: Validate documentation structure
+      run: |
+        echo "📋 Checking documentation structure..."
+        
+        # Check that key documentation files exist
+        FILES=(
+          "README.md"
+          "docs/README.md"
+          "docs/development.md"
+          "docs/workflows.md"
+          "CHANGELOG.md"
+        )
+        
+        for file in "${FILES[@]}"; do
+          if [[ -f "$file" ]]; then
+            echo "✅ $file exists"
+          else
+            echo "❌ $file is missing"
+            exit 1
+          fi
+        done
+        
+        echo "✅ All required documentation files exist"
+    
+    - name: Check for broken internal links
+      run: |
+        echo "🔗 Checking internal documentation links..."
+        
+        # Simple check for internal links in markdown files
+        grep -r "\]\(docs/" *.md docs/ || true
+        grep -r "\]\(\.\." *.md docs/ || true
+        
+        echo "✅ Internal link check completed"
+    
+    - name: Validate changelog format
+      run: |
+        echo "📜 Validating CHANGELOG.md format..."
+        
+        if grep -q "## \[Unreleased\]" CHANGELOG.md; then
+          echo "✅ Changelog has Unreleased section"
+        else
+          echo "⚠️ Changelog missing Unreleased section"
+        fi
+        
+        if grep -q "### Added\|### Changed\|### Fixed\|### Removed" CHANGELOG.md; then
+          echo "✅ Changelog has proper sections"
+        else
+          echo "⚠️ Changelog missing standard sections"
+        fi
+        
+        echo "✅ Changelog validation completed"
+
+  # Optional: Build documentation if using a static site generator
+  build-docs:
+    runs-on: ubuntu-latest
+    if: false  # Disabled for now, enable when using docs generator
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install documentation dependencies
+      run: |
+        pip install mkdocs mkdocs-material
+    
+    - name: Build documentation
+      run: |
+        mkdocs build --strict

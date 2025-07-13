@@ -6,7 +6,7 @@ This directory contains automated workflows for the easecloud-errica package.
 
 ### 1. `test.yml` - Continuous Testing
 **Triggers:**
-- Pull requests to main
+- Pull requests to main (code changes only)
 - Pushes to main (code changes only)
 - Manual dispatch
 
@@ -16,10 +16,12 @@ This directory contains automated workflows for the easecloud-errica package.
 - Runs example scripts
 - Tests package building
 
+**Code-only triggers**: Only runs when `src/`, `tests/`, `pyproject.toml`, or workflow files change
+
 ### 2. `publish.yml` - Automated Publishing
 **Triggers:**
-- Pushes to main → Dev releases (`X.Y.Z-dev.N+sha`)
-- Pushes to `release/**` branches → Beta releases (`X.Y.Z-beta.N`)
+- Pushes to main (code changes only) → Dev releases (`X.Y.Z-dev.N+sha`)
+- Pushes to `release/**` branches (code changes only) → Beta releases (`X.Y.Z-beta.N`)
 - GitHub releases → Stable releases (`X.Y.Z`)
 - Manual dispatch → Any release type
 
@@ -28,6 +30,8 @@ This directory contains automated workflows for the easecloud-errica package.
 - **Stable releases** → PyPI
 - Automatic version calculation based on commits
 - GitHub release creation for stable versions
+
+**Ignores**: Documentation changes (`.md`, `docs/`, `CHANGELOG.md`, etc.) won't trigger publishing
 
 ### 3. `release.yml` - Manual Release Creation
 **Triggers:**
@@ -40,6 +44,20 @@ This directory contains automated workflows for the easecloud-errica package.
 - Generates changelog
 - Creates GitHub release
 - Triggers publish workflow
+
+### 4. `docs.yml` - Documentation Validation
+**Triggers:**
+- Pull requests to main (documentation changes only)
+- Pushes to main (documentation changes only)
+- Manual dispatch
+
+**What it does:**
+- Lints Markdown files for formatting issues
+- Checks for broken links in documentation
+- Validates documentation structure
+- Checks changelog format
+
+**Documentation-only triggers**: Only runs when `.md`, `docs/`, or `CHANGELOG.md` files change
 
 ## Setup Required
 
