@@ -1,2 +1,0 @@
-[console_scripts]
-easecloud-errica = easecloud_errica.cli:main
