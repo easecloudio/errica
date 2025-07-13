@@ -231,7 +231,7 @@ jobs:
         echo "📤 Published to PyPI: https://pypi.org/project/easecloud-errica/${{ needs.version.outputs.version }}/"
     
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: package-${{ needs.version.outputs.version }}
         path: dist/
