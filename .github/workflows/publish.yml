@@ -1,10 +1,11 @@
 name: Build and Publish Package
 
 on:
-  # Trigger on pushes to main branch (dev releases)
+  # Trigger on pushes to main branch (dev releases) and release branches
   push:
     branches:
       - main
+      - 'release/**'
     paths-ignore:
       - '**.md'
       - 'docs/**'
@@ -18,20 +19,6 @@ on:
   # Trigger on release creation (stable releases)
   release:
     types: [published]
-
-  # Trigger on pre-release branches
-  push:
-    branches:
-      - 'release/**'
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - '.gitignore'
-      - 'examples/**'
-      - 'CHANGELOG.md'
-      - 'LICENSE'
-      - '.github/README.md'
-      - '.github/dependabot.yml'
 
   # Manual trigger for testing
   workflow_dispatch:
