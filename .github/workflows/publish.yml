@@ -44,7 +44,7 @@ jobs:
         python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
     
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
@@ -97,7 +97,7 @@ jobs:
       should_publish: ${{ steps.should_publish.outputs.publish }}
     
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
       with:
         fetch-depth: 0  # Need full history for version calculation
     
@@ -179,7 +179,7 @@ jobs:
       name: ${{ needs.version.outputs.release_type == 'stable' && 'production' || 'development' }}
     
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     
     - name: Set up Python
       uses: actions/setup-python@v5
