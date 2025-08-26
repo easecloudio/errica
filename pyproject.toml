@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "easecloud-errica"
-version = "0.1.0-beta"
-description = "Errica by EaseCloud — Your Python error monitor"
+version = "0.1.0"
+description = "Errica by EaseCloud Technologies — Your Python error monitor"
 readme = "README.md"
 license = {text = "MIT"}
 authors = [
